@@ -1,10 +1,47 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import ReactDOM from "react-dom";
 import Board, { moveCard } from "@lourenci/react-kanban";
+import axios from 'axios';
 import "@lourenci/react-kanban/dist/styles.css";
 // Use your own styles to override the default styles
 import "./styles.css";
-import DataFetching from "./datafetch";
+//import DataFetching from "./datafetch";
+
+
+const DataFetching = () => {
+ // const [loading,setloading] = useState(true)
+ // const [error,seterror] = useState('')
+  const [posts,setpost] = useState([])
+
+  useEffect(() =>{
+axios.get("https://cors-anywhere.herokuapp.com/https://react-kanban-server.herokuapp.com/")
+.then(res =>{
+  console.log(res)
+//  setloading(false)
+  setpost(res.data)
+ // seterror('')
+})
+.catch( error =>{
+ // setloading(false)
+  setpost({})
+ // seterror('')
+})
+  }, [])
+
+  return(
+      
+      <div>
+          <ul>
+          {posts.map(post =>(
+          <li key={post.id}>{post.Name}</li>
+))}
+          </ul>
+      
+
+      </div>
+  )
+}
+
 
 function ControlledBoard() {
   // You need to control the state yourself.
@@ -33,7 +70,7 @@ function App() {
         board state.
       </p>
       <ControlledBoard />
-      <DataFetching />
+  
     </>
   );
 }
