@@ -53,9 +53,9 @@ function ControlledBoard() {
   }
 
   return (
-    <DataFetching onCardDragEnd={handleCardMove} disableColumnDrag>
+    <Board onCardDragEnd={handleCardMove} disableColumnDrag>
       {controlledBoard}
-    </DataFetching>
+    </Board>
      
   ); 
 }
