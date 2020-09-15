@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React , {useState,useEffect} from 'react'
+import axios from 'axios';
 import ReactDOM from "react-dom";
 import Board, { moveCard } from "@lourenci/react-kanban";
 import "@lourenci/react-kanban/dist/styles.css";
 // Use your own styles to override the default styles
 // import "./styles.css";
-import DataFetching from "./datafetch"
+//import DataFetching from "./datafetch"
+
 
 const board = {
   columns: [
@@ -75,9 +77,30 @@ const board = {
   ]
 };
 
+
+
 function ControlledBoard() {
+  const [loading,setloading] = useState(true)
+  const [error,seterror] = useState('')
+  const [columns,setcolumns] = useState([])
+
+  useEffect(() =>{
+axios.get("https://cors-anywhere.herokuapp.com/https://react-kanban-server.herokuapp.com/")
+.then(res =>{
+  console.log(res)
+  setloading(false)
+  setcolumns(res.data.columns)
+  seterror('')
+})
+.catch( error =>{
+  setloading(false)
+  setcolumns({})
+  seterror('')
+})
+  }, [])
+ 
   // You need to control the state yourself.
-  const [controlledBoard, setBoard] = useState(board);
+  const [controlledBoard, setBoard] = useState({columns});
 
   function handleCardMove(_card, source, destination) {
     const updatedBoard = moveCard(controlledBoard, source, destination);
@@ -126,9 +149,10 @@ function App() {
       </p>
       <ControlledBoard />
 
-      <DataFetching  />
+  
     </>
   );
 }
+
 
 export default App;
