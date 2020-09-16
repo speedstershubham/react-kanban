@@ -98,7 +98,7 @@ axios.get("https://cors-anywhere.herokuapp.com/https://react-kanban-server.herok
   seterror('')
 })
   }, [])
- 
+ console.log(columns)
   // You need to control the state yourself.
   const [controlledBoard, setBoard] = useState({columns});
 
