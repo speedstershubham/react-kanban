@@ -1,41 +1,8 @@
-import React , {useState,useEffect} from 'react'
-import axios from 'axios';
-
-const DataFetching = () => {
+export const board = () => {
+    return fetch(`"https://cors-anywhere.herokuapp.com/https://react-kanban-server.herokuapp.com/"`, { method: "GET" })
+      .then(response => {
+        return response.json();
+      })
+      .catch(err => console.log(err));
+  };
   
-    const [loading,setloading] = useState(true)
-    const [error,seterror] = useState('')
-    const [columns,setcolumns] = useState([])
-
-    useEffect(() =>{
-axios.get("https://cors-anywhere.herokuapp.com/https://react-kanban-server.herokuapp.com/")
-.then(res =>{
-    console.log(res)
-    setloading(false)
-    setcolumns(res.data.columns)
-    seterror('')
-})
-.catch( error =>{
-    setloading(false)
-    setcolumns([])
-    seterror('')
-})
-    }, [])
-
-    return(
-        
-        <div>
-            
-            <ul>
-            {columns.map((post) =>(
-            <li key={post.id}>{post.title} {post.cards}</li>
-           
-))}
-            </ul>
-        
-
-        </div>
-    )
-}
-
-export default DataFetching;
