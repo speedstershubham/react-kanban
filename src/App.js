@@ -5,7 +5,7 @@ import "@lourenci/react-kanban/dist/styles.css";
  //import "./styles.css";
 import Datafetch from "./Datafetch";
 
-export class App extends Component {
+ class App extends Component {
   state ={message:""}
 
   callbackFunction = (childData) => {
