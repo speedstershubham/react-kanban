@@ -11,7 +11,7 @@ import "@lourenci/react-kanban/dist/styles.css";
 
     const getData= async() =>{
 try {
-  const response = await axios.get("http://localhost:8080/")
+  const response = await axios.get("https://react-kanban-server.herokuapp.com/")
 //  console.log(response.data)
 
 const {columns,cards} = ({...response.data})

@@ -11,7 +11,7 @@ const Cards = () => {
   });
 
   const createcard = user =>{
-    return fetch(`http://localhost:8080/card/new`, {
+    return fetch(`https://react-kanban-server.herokuapp.com/card/new`, {
         method:"POST",
         headers :{
             Accept: "application/json",
@@ -127,4 +127,4 @@ const Cards = () => {
 
 export default Cards;
 
- // <p className="text-white text-center">{JSON.stringify(values)}</p>import React, { useState } from "react";
+

@@ -11,7 +11,7 @@ const Column = () => {
   });
 
   const createcolumn = user =>{
-    return fetch(`http://localhost:8080/new/`, {
+    return fetch(`https://react-kanban-server.herokuapp.com/new/`, {
         method:"POST",
         headers :{
             Accept: "application/json",
