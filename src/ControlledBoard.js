@@ -1,13 +1,13 @@
 import React,{useState,useEffect} from 'react'
 import Board, { moveCard } from "@lourenci/react-kanban";
 import axios from 'axios'
+import "@lourenci/react-kanban/dist/styles.css";
+
 
 
   const ControlledBoard = () => {
   
     const [controlledBoard, setBoard] = useState();
-  
-
 
     const getData= async() =>{
 try {
@@ -15,8 +15,6 @@ try {
 //  console.log(response.data)
 
 const {columns,cards} = ({...response.data})
-console.log({columns})
-console.log({cards})
 
 const columnData = columns.map(column => {
   return ({ ...column,cards:cards.filter(card => card.columnid === column._id)})
@@ -32,10 +30,12 @@ setBoard({columns:columnData})
     },[])
     
     const handleCardMove = (_card,source, destination ) => {
+      console.log( "111111", {_card,source, destination })
+      console.log({controlledBoard})
       const updatedBoard = moveCard(controlledBoard, source, destination);
       setBoard(updatedBoard);
     }
-
+    
 
   console.log({controlledBoard})
 
