@@ -1,40 +1,45 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+
 
 
 const Column = () => {
+
   const [values, setValues] = useState({
     title: "",
-    description: "",
     error: "",
     success: false
   });
+  
 
-  const createcolumn = user =>{
-    return fetch(`https://react-kanban-server.herokuapp.com/new/`, {
+  const createcolumn = async col => {
+    return await fetch(`https://react-kanban-server.herokuapp.com/new/`, {
         method:"POST",
         headers :{
             Accept: "application/json",
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(user)
+
+        body: JSON.stringify(col)
+
     })
+    
     .then(response => {
-        return response.json();
+
+        return response.json(col);
     })
     .catch(err => console.log(err));
 };
 
-  const { title, description, error, success } = values;
+  const { title, error, success } = values;
 
-  const handleChange = name => event => {
-    setValues({ ...values, error: false, [name]: event.target.value });
+  const handleChange = title => event => {
+    setValues({ ...values, error: false, [title]: event.target.value });
   };
 
   const onSubmit = event => {
     event.preventDefault();
     setValues({ ...values, error: false });
-    createcolumn({ title,description})
+    createcolumn({ title})
       .then(data => {
         if (data.error) {
           setValues({ ...values, error: data.error, success: false });
@@ -51,16 +56,18 @@ const Column = () => {
   };
 
   const ColumnForm = () => {
+  
     return (
       <div className="row">
         <div className="col-md-6 offset-sm-3 text-left">
           <form>
             <div className="form-group">
                 <p>Create Column</p>
-              <label className="text-light">title</label>
+             
               <input
                 className="form-control"
                 onChange={handleChange("title")}
+                placeholder="Enter new Column"
                 type="text"
                 value={title}
               />
@@ -118,4 +125,3 @@ const Column = () => {
 
 export default Column;
 
- // <p className="text-white text-center">{JSON.stringify(values)}</p>import React, { useState } from "react";

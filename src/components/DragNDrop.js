@@ -3,6 +3,9 @@ import React, { useState, useRef, useEffect } from "react";
 function DragNDrop({ data }) {
   const [list, setList] = useState(data);
   const [dragging, setDragging] = useState(false);
+  const [values, setValues] = useState({
+    columns: [],
+  });
 
   useEffect(() => {
     setList(data);
@@ -11,12 +14,12 @@ function DragNDrop({ data }) {
   const dragItem = useRef();
   const dragItemNode = useRef();
 
-  const handletDragStart = (e, cards) => {
-    console.log("Starting to drag", cards);
+  const handletDragStart = (e, item) => {
+    console.log("Starting to drag", item);
 
     dragItemNode.current = e.target;
     dragItemNode.current.addEventListener("dragend", handleDragEnd);
-    dragItem.current = cards;
+    dragItem.current = item;
 
     setTimeout(() => {
       setDragging(true);
@@ -28,10 +31,10 @@ function DragNDrop({ data }) {
       console.log("Target is NOT the same as dragged item");
       setList((oldList) => {
         let newList = JSON.parse(JSON.stringify(oldList));
-        newList[targetItem.grpI].items.splice(
+        newList[targetItem.grpI].cards.splice(
           targetItem.itemI,
           0,
-          newList[dragItem.current.grpI].items.splice(
+          newList[dragItem.current.grpI].cards.splice(
             dragItem.current.itemI,
             1
           )[0]
@@ -42,40 +45,101 @@ function DragNDrop({ data }) {
       });
     }
   };
+  const preload = () => {
+    getColumns().then(data => {
+      console.log({data});
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        setValues({ ...values, columns: data});
+      }
+    });
+  };
+  useEffect(() => {
+    preload();
+  }, [] );
+  
+  
+  const getColumns = () => {
+    return fetch(`https://react-kanban-server.herokuapp.com/getcolumns`, {
+      method: "GET"
+    })
+      .then(response => {
+        return response.json();
+      })
+      .catch(err => console.log(err));
+  };
+  
+
+  const deleteColumn = columnid => {
+    deleteCol(columnid).then(data => {
+      console.log({data})
+      if (data.error) {
+        console.log(data.error);
+      } else {
+        list();
+      }
+    });
+  };
+
+
+  const deleteCol = columnid => {
+    return fetch(`https://react-kanban-server.herokuapp.com/deletecol/${columnid}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      }
+    })
+      .then(response => {
+        return response.json(columnid);
+      })
+      .catch(err => console.log(err));
+  };
+
   const handleDragEnd = (e) => {
     setDragging(false);
     dragItem.current = null;
     dragItemNode.current.removeEventListener("dragend", handleDragEnd);
     dragItemNode.current = null;
   };
-  const getStyles = (cards) => {
+  const getStyles = (item) => {
     if (
-      dragItem.current.grpI === cards.grpI &&
-      dragItem.current.itemI === cards.itemI
+      dragItem.current.grpI === item.grpI &&
+      dragItem.current.itemI === item.itemI
     ) {
       return "dnd-item current";
     }
     return "dnd-item";
   };
-  console.log(list);
-
+  console.log({ list });
   if (list) {
     return (
       <div className="drag-n-drop">
-        {list.map((columns, grpI) => (
+        {list.map((grp, grpI) => (
           <div
-            key={grpI.id}
+            key={grp.title}
             onDragEnter={
-              dragging && !columns.items.length
+              dragging && !grp.length
                 ? (e) => handleDragEnter(e, { grpI, itemI: 0 })
                 : null
             }
             className="dnd-group"
           >
-            {columns.cards.map((cards, itemI) => (
+              <div className="col-4">
+                  <button
+                    onClick={() => {
+                      deleteColumn(grp._id);
+                    }}
+                    className="btn btn-danger"
+                  >
+                    Delete
+                  </button>
+                </div>
+            <div className="group-title">{grp.title} </div>
+            {grp.cards.map((item, itemI) => (
               <div
                 draggable
-                key={itemI.id}
+                key={item.title}
                 onDragStart={(e) => handletDragStart(e, { grpI, itemI })}
                 onDragEnter={
                   dragging
@@ -86,7 +150,7 @@ function DragNDrop({ data }) {
                 }
                 className={dragging ? getStyles({ grpI, itemI }) : "dnd-item"}
               >
-                {cards}
+                {item.title} <br /> {item.description}
               </div>
             ))}
           </div>
